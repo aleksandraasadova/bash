@@ -1,40 +1,34 @@
 #include "s21_grep.h"
 
+static short check_files_number(int, int);
+
 int main(int argc, char *argv[]) {
-    options opt = {0};
+  options opt = {0};
+  char *templates[argc];        // !!
+  short templates_counter = 0;  // !!
+  short flag_option = 1;
 
-    //printf("argc is %d", argc);
+  if (argc > 2) {  // 2
+    parse_options(argc, argv, &opt, templates, &templates_counter,
+                  &flag_option);
+    //printf("Template: %d\n", templates_counter);
+    short files_number = check_files_number(optind, argc);
 
-    char *templates[argc];;
-    short t_counter = 0;
-    short flag_option = 1;
-
-    if (argc > 2) { //2
-        parse_options(argc, argv, &opt, templates, &t_counter, &flag_option);
-
-        while (optind < argc) {
-            char **lines = NULL;
-            int lines_number = 0;
-            short flag_fopen = 1;
-            puts("future process func");
-            printf("file is %s\n", argv[optind]);
-            read_file(argv[optind], &flag_fopen, &lines, &lines_number);
-            if (flag_fopen == 1 && flag_option == 1) {
-                puts("wow i made it to here");
-                printf("delete me later %d\n", lines_number);
-                if (lines != NULL) {
-                    for (int i = 0; i < lines_number; i++) {
-                        free(lines[i]);
-                    }
-                }
-                free(lines);
-            }
-            optind++;
-        }
-    } else {
-        printf("Invalid input\n");
+    while (optind < argc) {
+      process_file(argv[optind], templates, templates_counter, opt, files_number, flag_option);
+      optind++;
     }
-    return 0;
+  } else {
+    printf("Invalid input\n");
+  }
+  return 0;
 }
 
+short check_files_number(int optind, int argc) {
+  short res = 0;
+  if (optind < argc - 1) {
+    res = 1;
+  }
+  return res;
+}
 
