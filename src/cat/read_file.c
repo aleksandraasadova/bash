@@ -6,7 +6,6 @@ static void write_file_to_array(FILE *fp, char *buffer, size_t file_size);
 // открытие файла
 void read_file(const char *file_path, char **buffer, size_t *file_size,
                short *flag_fopen) {
-
   FILE *fp = fopen(file_path, "r");
 
   if (fp != NULL) {
@@ -23,7 +22,7 @@ void read_file(const char *file_path, char **buffer, size_t *file_size,
     }
   } else {
     *flag_fopen = 0;
-    printf("cat: %s no such file or directory\n", file_path);
+    printf("cat: %s: no such file or directory\n", file_path);
   }
 }
 
@@ -41,4 +40,4 @@ void write_file_to_array(FILE *fp, char *buffer, size_t file_size) {
   while (((current = fgetc(fp)) != EOF) && (index < file_size)) {
     buffer[index++] = (char)current;
   }
-} 
+}

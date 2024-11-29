@@ -4,7 +4,7 @@ static short check_files_number(int, int);
 
 int main(int argc, char *argv[]) {
   options opt = {0};
-  //char *templates[argc];        // !!
+  // char *templates[argc];        // !!
   char **templates = malloc(argc * sizeof(char *));
   short templates_counter = 0;  // !!
   short flag_option = 1;

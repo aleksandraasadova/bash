@@ -22,7 +22,7 @@ void read_file(const char *file_path, short *flag_fopen, char **buffer,
     }
   } else {
     *flag_fopen = 0;
-    printf("cat: %s no such file or directory\n", file_path);
+    printf("grep: %s: no such file or directory\n", file_path);
   }
 }
 

@@ -1,6 +1,6 @@
 #include "s21_cat.h"
 
-void process_file(const char *file_path, options *opt, int *lines_number,
+void process_file(const char *file_path, const options *opt, int *lines_number,
                   int *empty_lines) {
   char *buffer = NULL;
   size_t file_size;

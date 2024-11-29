@@ -2,9 +2,8 @@
 
 static void nonprintable(unsigned char);
 
-void process_flag(options *opt, char *buffer, size_t file_size,
+void process_flag(const options *opt, const char *buffer, size_t file_size,
                   int *lines_number, int *empty_lines) {
-
   if (opt->n) {
     flag_n(buffer, file_size, lines_number);
   } else if (opt->b) {
@@ -26,13 +25,13 @@ void process_flag(options *opt, char *buffer, size_t file_size,
   }
 }
 
-void print_file(char *buffer, size_t file_size) {
+void print_file(const char *buffer, size_t file_size) {
   for (size_t i = 0; i < file_size; i++) {
     putchar(buffer[i]);
   }
 }
 
-void flag_n(char *buffer, size_t file_size, int *lines_number) {
+void flag_n(const char *buffer, size_t file_size, int *lines_number) {
   for (size_t i = 0; i < file_size; i++) {
     if (i == 0 || buffer[i - 1] == '\n') {
       printf("%6d\t", (*lines_number)++);
@@ -41,7 +40,7 @@ void flag_n(char *buffer, size_t file_size, int *lines_number) {
   }
 }
 
-void flag_b(char *buffer, size_t file_size, int *lines_number) {
+void flag_b(const char *buffer, size_t file_size, int *lines_number) {
   for (size_t i = 0; i < file_size; i++) {
     if ((i == 0 || buffer[i - 1] == '\n') && buffer[i] != '\n') {
       printf("%6d\t", (*lines_number)++);
@@ -50,7 +49,7 @@ void flag_b(char *buffer, size_t file_size, int *lines_number) {
   }
 }
 
-void flag_s(char *buffer, size_t file_size, int *empty_lines) {
+void flag_s(const char *buffer, size_t file_size, int *empty_lines) {
   for (size_t i = 0; i < file_size; i++) {
     if (buffer[i] == '\n') {
       if (i == 0 && *empty_lines > 0) {
@@ -90,14 +89,14 @@ void nonprintable(unsigned char current) {
   }
 }
 
-void flag_v(char *buffer, size_t file_size) {
+void flag_v(const char *buffer, size_t file_size) {
   for (size_t i = 0; i < file_size; i++) {
     unsigned char current = (unsigned char)buffer[i];
     nonprintable(current);
   }
 }
 
-void flag_e(char *buffer, size_t file_size) {
+void flag_e(const char *buffer, size_t file_size) {
   for (size_t i = 0; i < file_size; i++) {
     unsigned char current = (unsigned char)buffer[i];
     if (current == '\n') {
@@ -107,7 +106,7 @@ void flag_e(char *buffer, size_t file_size) {
   }
 }
 
-void flag_E(char *buffer, size_t file_size) {
+void flag_E(const char *buffer, size_t file_size) {
   for (size_t i = 0; i < file_size; i++) {
     if (buffer[i] == '\n') {
       putchar('$');
@@ -118,7 +117,7 @@ void flag_E(char *buffer, size_t file_size) {
   }
 }
 
-void flag_T(char *buffer, size_t file_size) {
+void flag_T(const char *buffer, size_t file_size) {
   for (size_t i = 0; i < file_size; i++) {
     if (buffer[i] == '\t') {
       putchar('^');
@@ -129,7 +128,7 @@ void flag_T(char *buffer, size_t file_size) {
   }
 }
 
-void flag_t(char *buffer, size_t file_size) {
+void flag_t(const char *buffer, size_t file_size) {
   for (size_t i = 0; i < file_size; i++) {
     unsigned char current = (unsigned char)buffer[i];
     if (current == '\t') {

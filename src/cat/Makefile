@@ -14,10 +14,10 @@ clean:
 rebuild: clean all
 
 format:
-	clang-format -i *.c
+	clang-format -i $(FILES) *.h
 
 check-format:
-	clang-format -n *.c
+	clang-format -n $(FILES) *.h
 
 check:
-	cppcheck --enable=all --suppress=missingIncludeSystem $(FILES)
+	cppcheck --enable=all --suppress=missingIncludeSystem $(FILES) *.h

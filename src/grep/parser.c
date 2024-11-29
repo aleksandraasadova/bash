@@ -1,5 +1,6 @@
 #include "s21_grep.h"
 
+static void conflicting_pairs(options *);
 static struct option long_options[] = {{0, 0, 0, 0}};
 
 void parse_options(int argc, char **argv, options *opt, char **templates,
@@ -36,17 +37,25 @@ void parse_options(int argc, char **argv, options *opt, char **templates,
         break;
     }
   }
+  conflicting_pairs(opt);
   if (!opt->e && (optind < argc)) {  // от ошибки сегментации
     templates[*t_counter] = argv[optind];
-    // printf("argv[optind] is [not e] %s\n", argv[optind]);
     (*t_counter)++;
     optind++;
   }
-  //} else {
-  // printf("argv[optind] is [e] %s\n", templates[0]);
-  // printf("argv[optind] is [e] %s\n", templates[1]);
-  //}
   if (*t_counter == 0) {
     fprintf(stderr, "no templates in your input\n");
+  }
+}
+
+void conflicting_pairs(options *opt) {
+  if (opt->c && opt->l) {
+    opt->c = 0;
+  }
+  if (opt->c && opt->n) {
+    opt->n = 0;
+  }
+  if (opt->n && opt->l) {
+    opt->n = 0;
   }
 }
