@@ -9,7 +9,7 @@ void read_file(const char *file_path, short *flag_fopen, char **buffer,
 
   if (fp != NULL) {
     *file_size = get_file_size(fp);
-    if (file_size != 0) {
+    if (*file_size != 0) {
       *buffer = malloc(*file_size);
       if (*buffer != NULL) {
         write_file_to_array(fp, *buffer, *file_size);

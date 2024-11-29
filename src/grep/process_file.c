@@ -1,63 +1,145 @@
 #include "s21_grep.h"
 
-static void parse_buffer(const char *file_path, char *buffer, size_t file_size, char **templates, short templates_counter, options opt, short files_number, int *line_number, short *l_flag, int *counter);
+static void parse_buffer(const char *file_path, const char *buffer,
+                         size_t file_size, char **templates,
+                         short templates_counter, options opt,
+                         short files_number, int *line_number, short *l_flag,
+                         int *counter);
 static void find_pattern(const char *file_path, char *line, char **templates,
                          short t_counter, options opt, short files_number,
                          int *line_number, short *l_flag, int *counter);
 static int regexpr(char *template, char *line, options opt);
+static short handle_error(const char *temp, char **line, short *error);
 
-void process_file(const char *file_path, char **templates, short templates_counter, options opt, short files_number, short flag_option) {
-    short flag_fopen = 1;
-    //printf("file is %s\n", argv[optind]);
-    char *buffer = NULL;
-    size_t file_size;
-    read_file(file_path, &flag_fopen, &buffer, &file_size);
-    if (flag_fopen == 1 && flag_option == 1) {
-        //puts("wow i made it to here");
-        short l_flag = 0;
-        int line_number = 0;
-        int counter = 0;
-        parse_buffer(file_path, buffer, file_size, templates,
-                     templates_counter, opt, files_number, &line_number,
-                     &l_flag, &counter);
-        free(buffer);
-        if (opt.c) {
-          printf("%d\n", opt.c);
-        }
+void process_file(const char *file_path, char **templates,
+                  short templates_counter, options opt, short files_number,
+                  short flag_option) {
+  short flag_fopen = 1;
+  char *buffer = NULL;
+  size_t file_size;
+  read_file(file_path, &flag_fopen, &buffer, &file_size);
+  if (flag_fopen == 1 && flag_option == 1) {
+    short l_flag = 0;
+    int line_number = 0;
+    int counter = 0;
+    parse_buffer(file_path, buffer, file_size, templates, templates_counter,
+                 opt, files_number, &line_number, &l_flag, &counter);
+                 line_number = 0;
+    free(buffer);
+    if (opt.c && files_number) {
+      printf("%s:%d\n", file_path, counter);
+    } else if (opt.c) {
+      printf("%d\n", counter);
     }
+  }
 }
 
-void parse_buffer(const char *file_path, char *buffer, size_t file_size,
+/*void parse_buffer(const char *file_path, const char *buffer, size_t file_size,
                   char **templates, short templates_counter, options opt,
                   short files_number, int *line_number, short *l_flag,
                   int *counter) {
   char *line = NULL;
   int line_ind = 0;
+  int error = 0;
   for (size_t i = 0; i < file_size; i++) {
     if (buffer[i] != '\n' && buffer[i] != '\0') {
-      line = realloc(line, line_ind + 1);
-      line[line_ind++] = buffer[i];
-    } else {
-      if (line_ind > 0) {
-        line = realloc(line, line_ind + 1);
-        line[line_ind] = '\0';
-        (*line_number)++;
-        line_ind = 0;
-        find_pattern(file_path, line, templates, templates_counter, opt,
-                     files_number, line_number, l_flag, counter);
+      char *temp = realloc(line, line_ind + 1);
+      if (temp == NULL) {
+        error = 1;
         free(line);
         line = NULL;
-        line_ind = 0;
+      } else {
+        line = temp;
+        line[line_ind++] = buffer[i];
+      }
+    } else {
+      if (line_ind > 0) {
+        char *temp = realloc(line, line_ind + 1);
+        if (temp == NULL) {
+          error = 1;
+          free(line);
+          line = NULL;
+        } else {
+          line = temp;
+          line[line_ind] = '\0';
+          (*line_number)++;
+          find_pattern(file_path, line, templates, templates_counter, opt,
+                       files_number, line_number, l_flag, counter);
+          free(line);
+          line = NULL;
+          line_ind = 0;
+        }
       }
     }
   }
   if (line_ind > 0) {
-    line = realloc(line, line_ind + 1);
-    line[line_ind] = '\0';
-    (*line_number)++;
-    find_pattern(file_path, line, templates, templates_counter, opt,
-                 files_number, line_number, l_flag, counter);
-    free(line);
+    char *temp = realloc(line, line_ind + 1);
+    if (temp == NULL) {
+      error = 1;
+      free(line);
+      line = NULL;
+    } else {
+      line = temp;
+      line[line_ind] = '\0';
+      (*line_number)++;
+      find_pattern(file_path, line, templates, templates_counter, opt,
+                   files_number, line_number, l_flag, counter);
+      free(line);
+    }
+  }
+  if (error) {
+    fprintf(stderr, "Ошибка при выделении памяти\n");
+  }
+}*/
+void parse_buffer(const char *file_path, const char *buffer, size_t file_size,
+                  char **templates, short templates_counter, options opt,
+                  short files_number, int *line_number, short *l_flag,
+                  int *counter) {
+  char *line = NULL;
+  int line_ind = 0;
+  short error = 0;
+  for (size_t i = 0; i < file_size; i++) {
+    if (buffer[i] != '\n' && buffer[i] != '\0') {
+      char *temp = realloc(line, line_ind + 1);
+      error = handle_error(temp, &line, &error);
+      if (error) {
+      } else {
+        line = temp;
+        line[line_ind++] = buffer[i];
+      }
+    } else {
+      if (line_ind > 0) {
+        char *temp = realloc(line, line_ind + 1);
+        error = handle_error(temp, &line, &error);
+        if (error) {
+        } else {
+          line = temp;
+          line[line_ind] = '\0';
+          (*line_number)++;
+          find_pattern(file_path, line, templates, templates_counter, opt,
+                       files_number, line_number, l_flag, counter);
+          free(line);
+          line = NULL;
+          line_ind = 0;
+        }
+      }
+    }
+  }
+  if (line_ind > 0) {
+    char *temp = realloc(line, line_ind + 1);
+    error = handle_error(temp, &line, &error);
+    if (error) {
+    } else {
+      line = temp;
+      line[line_ind] = '\0';
+      (*line_number)++;
+      find_pattern(file_path, line, templates, templates_counter, opt,
+                   files_number, line_number, l_flag, counter);
+      free(line);
+    }
+  }
+  if (error) {
+    fprintf(stderr, "Ошибка при выделении памяти\n");
   }
 }
 
@@ -87,10 +169,10 @@ void find_pattern(const char *file_path, char *line, char **templates,
       printf("%s:%d:%s\n", file_path, *line_number, line);
     } else if (!res && opt.n) {
       printf("%d:%s\n", *line_number, line);
-    } else if (!res && files_number) {
-      printf("%s:%s\n", file_path, line);
-    } else if (!res) {
+    } else if (!res && !opt.l && !opt.c) {
       printf("%s\n", line);
+    } else if (!res && files_number && !opt.c && !opt.l) {
+      printf("%s:%s\n", file_path, line);
     }
   }
 }
@@ -102,4 +184,14 @@ int regexpr(char *template, char *line, options opt) {
   int res = regexec(&preg, line, 0, 0, 0);
   regfree(&preg);
   return res;  // 0 = found
+}
+short handle_error(const char *temp, char **line, short *error) {
+  if (temp == NULL) {
+    if (*line) {
+      free(*line);
+      *line = NULL;
+    }
+    *error = 1;
+  }
+  return *error;
 }

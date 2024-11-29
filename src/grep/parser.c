@@ -38,13 +38,13 @@ void parse_options(int argc, char **argv, options *opt, char **templates,
   }
   if (!opt->e && (optind < argc)) {  // от ошибки сегментации
     templates[*t_counter] = argv[optind];
-    //printf("argv[optind] is [not e] %s\n", argv[optind]);
+    // printf("argv[optind] is [not e] %s\n", argv[optind]);
     (*t_counter)++;
     optind++;
   }
   //} else {
-    //printf("argv[optind] is [e] %s\n", templates[0]);
-    // printf("argv[optind] is [e] %s\n", templates[1]);
+  // printf("argv[optind] is [e] %s\n", templates[0]);
+  // printf("argv[optind] is [e] %s\n", templates[1]);
   //}
   if (*t_counter == 0) {
     fprintf(stderr, "no templates in your input\n");
