@@ -68,6 +68,7 @@ void parse_buffer(const char *file_path, const char *buffer, size_t file_size,
     }
   }
   if (line_ind > 0) {
+    //puts("last line");
     char *temp = realloc(line, line_ind + 1);
     error = handle_error(temp, &line, &error);
     if (error) {
@@ -84,48 +85,105 @@ void parse_buffer(const char *file_path, const char *buffer, size_t file_size,
     fprintf(stderr, "Ошибка при выделении памяти\n");
   }
 }
-
+//1345/230
 void find_pattern(const char *file_path, char *line, char **templates,
                   short templates_counter, options opt, short files_number,
                   const int *line_number, short *l_flag, int *counter) {
-  short res_flag = 0;
+  short found = 0; 
+  short flag = 0; //хотя бы 1
   for (short i = 0; i < templates_counter; i++) {
     int res = regexpr(templates[i], line, opt);
-    if ((!res_flag) && (!res)) {
-      res_flag = 1;
+    if (!res) {
+      flag = 1;
     }
     // regexepr возвращает 0 в случае если шаблон найден 0 - ок
-    if (opt.v && res_flag) {
-      res = 1;
-    } else if (opt.v && !res_flag) {
-      res = 0;
+    if (opt.v) {
+      res = !res;
     }
-    if (!res) {
-      (*counter)++;
+    if ((res == 0 && opt.v && !flag) || (res == 0 && !opt.v)) { //1423/152
+      found = 1; 
+    }
     }
 
-    if (opt.l && !res && !(*l_flag)) {
+    if (found) {
+      (*counter)++;
+    
+
+    if (opt.l && !(*l_flag)) {
       printf("%s\n", file_path);
       *l_flag = 1;
     }
-    if (!res && opt.n && files_number) {
+    else if (opt.n && files_number) {
       // puts("here");
       printf("%s:%d:%s\n", file_path, *line_number, line);
-    } else if (!res && opt.n) {
+    } else if (opt.n) {
       // puts("here2");
       printf("%d:%s\n", *line_number, line);
-    } else if (!res && !opt.l && !opt.c && !files_number) {
+    } else if (!opt.l && !opt.c && !files_number) {
       // puts("here3");
       printf("%s\n", line);
-    } else if (!res && files_number && !opt.c && !opt.l) {
+    } else if (files_number && !opt.c && !opt.l) {
       // puts("here4");
       printf("%s:%s\n", file_path, line);
-    } else if (!res && files_number && !opt.n && !opt.l && !opt.c) {
+    } else if (files_number && !opt.n && !opt.l && !opt.c) {
       // puts("here5");
       printf("%s:%s\n", file_path, line);
     }
+    }
   }
-}
+
+/*void find_pattern(const char *file_path, char *line, char **templates,
+                  short templates_counter, options opt, short files_number,
+                  const int *line_number, short *l_flag, int *counter) {
+  //printf("!!!%s\n", line);
+  short found = 0;
+  //puts("tut1");
+  for (short i = 0; i < templates_counter; i++) {
+    //printf("temp is %s\n", templates[i]);
+    int res = regexpr(templates[i], line, opt);
+    if (opt.v) {
+      res = !res;
+    }
+    if (res == 0) {
+      found = 1;
+    }
+  }
+
+
+   if (found) {
+    //puts("tut3");
+    // regexepr возвращает 0 в случае если шаблон найден 0 - ок
+    (*counter)++;
+    
+//puts("*");
+    if (opt.l && !(*l_flag)) {
+      printf("%s\n", file_path);
+      *l_flag = 1;
+    }
+    //puts("*");
+    if (opt.n && files_number) {
+       //puts("here!");
+      printf("%s:%d:%s\n", file_path, *line_number, line);
+    } else if (opt.n) {
+       //puts("here2!");
+      printf("%d:%s\n", *line_number, line);
+    } else if (!opt.l && !opt.c && !files_number && !opt.n) {
+      //puts("a");
+      printf("%s\n", line);
+    }else if (!opt.l && !opt.c && !files_number) {
+      //puts("here3!");
+      printf("%s\n", line);
+    } else if (files_number && !opt.c && !opt.l) {
+       //puts("here4");
+      printf("%s:%s\n", file_path, line);
+    } else if (files_number && !opt.n && !opt.l && !opt.c) {
+       //puts("here5");
+      printf("%s:%s\n", file_path, line);
+    } else {
+      printf("%s\n", line);
+    }
+   }
+}*/
 
 int regexpr(char *template, char *line, options opt) {
   int flags = (opt.i) ? REG_ICASE | REG_EXTENDED : REG_EXTENDED;
