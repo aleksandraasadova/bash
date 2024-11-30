@@ -1,9 +1,8 @@
 #include "s21_cat.h"
 
 static size_t get_file_size(FILE *);
-static void write_file_to_array(FILE *fp, char *buffer, size_t file_size);
+static void write_file_to_array(FILE *, char *, size_t);
 
-// открытие файла
 void read_file(const char *file_path, char **buffer, size_t *file_size,
                short *flag_fopen) {
   FILE *fp = fopen(file_path, "r");
@@ -18,7 +17,6 @@ void read_file(const char *file_path, char **buffer, size_t *file_size,
       fclose(fp);
     } else {
       fclose(fp);
-      *flag_fopen = 0;
     }
   } else {
     *flag_fopen = 0;
@@ -30,7 +28,7 @@ size_t get_file_size(FILE *fp) {
   size_t file_size = 0;
   fseek(fp, 0, SEEK_END);
   file_size = ftello(fp);
-  fseek(fp, 0, SEEK_SET);  // fp - указатель на начало файла
+  fseek(fp, 0, SEEK_SET);  
   return file_size;
 }
 

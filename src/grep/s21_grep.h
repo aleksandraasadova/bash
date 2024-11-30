@@ -28,3 +28,7 @@ void process_file(const char *file_path, char **templates,
                   short flag_option);
 void read_file(const char *file_path, short *flag_fopen, char **buffer,
                size_t *file_size);
+void parse_buffer(const char *file_path, const char *buffer, size_t file_size,
+                  char **templates, short templates_counter, options opt,
+                  short files_number, int *line_number, short *l_flag,
+                  int *counter);

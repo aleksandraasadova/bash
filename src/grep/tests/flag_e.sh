@@ -1,5 +1,7 @@
+make -C ../ s21_grep
+
 flags=("i" "v" "n" "l" "c")
-patterns=("ab" "hello" "aboba" "popa" "ba")
+patterns=("ab" "hello" "oba" "opa" "ba")
 
 # Счетчики для совпадений и несовпадений
 matches=0
@@ -24,9 +26,9 @@ for (( i=0; i<${#flags[@]}; i++ )); do
                     fi
 
                     # Проверка всех флагов
-                    echo "Тестирование с флагами -$flag_combination и шаблоном '$pattern' на War.txt"
-                    ./s21_grep -$flag_combination $pattern War.txt > s21_output.txt
-                    grep -$flag_combination $pattern War.txt > grep_output.txt
+                    echo "Тестирование с флагами -$flag_combination и шаблоном '$pattern' на test1.txt"
+                    ../s21_grep -$flag_combination $pattern test1.txt > s21_output.txt
+                    grep -$flag_combination $pattern test1.txt > grep_output.txt
                     if diff -u s21_output.txt grep_output.txt > /dev/null; then
                         echo "Вывод совпадает"
                         ((matches++))
@@ -35,9 +37,9 @@ for (( i=0; i<${#flags[@]}; i++ )); do
                         ((mismatches++))
                     fi
 
-                    echo "Тестирование с флагами -$flag_combination и шаблоном '$pattern' на tests/test.txt"
-                    ./s21_grep -$flag_combination $pattern tests/test.txt > s21_output.txt
-                    grep -$flag_combination $pattern tests/test.txt > grep_output.txt
+                    echo "Тестирование с флагами -$flag_combination и шаблоном '$pattern' test.txt"
+                    ../s21_grep -$flag_combination $pattern test.txt > s21_output.txt
+                    grep -$flag_combination $pattern test.txt > grep_output.txt
                     if diff -u s21_output.txt grep_output.txt > /dev/null; then
                         echo "Вывод совпадает"
                         ((matches++))
@@ -47,8 +49,8 @@ for (( i=0; i<${#flags[@]}; i++ )); do
                     fi
 
                     echo "Тестирование с флагами -$flag_combination и шаблоном '$pattern' на обоих файлах"
-                    ./s21_grep -$flag_combination $pattern War.txt tests/test.txt > s21_output.txt
-                    grep -$flag_combination $pattern War.txt tests/test.txt > grep_output.txt
+                    ../s21_grep -$flag_combination $pattern test1.txt test.txt > s21_output.txt
+                    grep -$flag_combination $pattern test1.txt test.txt > grep_output.txt
                     if diff -u s21_output.txt grep_output.txt > /dev/null; then
                         echo "Вывод совпадает"
                         ((matches++))
@@ -64,6 +66,7 @@ done
 
 # Удаляем временные файлы
 rm s21_output.txt grep_output.txt
+make -C ../ clean
 
 # Выводим результаты
 echo "Количество совпадений: $matches"

@@ -168,3 +168,6 @@ echo "FAILED: $FAIL"
 echo "SUCCESSFUL: $SUCCESS"
 echo "ALL: $COUNTER"
 printf "\n"
+
+rm s21_cat.log
+make clean

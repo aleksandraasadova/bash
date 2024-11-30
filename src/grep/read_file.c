@@ -18,7 +18,6 @@ void read_file(const char *file_path, short *flag_fopen, char **buffer,
 
     } else {
       fclose(fp);
-      *flag_fopen = 0;
     }
   } else {
     *flag_fopen = 0;

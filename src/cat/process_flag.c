@@ -53,14 +53,17 @@ void flag_s(const char *buffer, size_t file_size, int *empty_lines) {
   for (size_t i = 0; i < file_size; i++) {
     if (buffer[i] == '\n') {
       if (i == 0 && *empty_lines > 0) {
-      } else if ((i == 0) && (buffer[i + 1] == '\n') && (*empty_lines == 0)) {
+      } else if (i == 0) {
         putchar(buffer[i]);
+        (*empty_lines)++;
       } else if (*empty_lines == 0) {
+
         putchar(buffer[i]);
-      } else if ((*empty_lines == 1) && (buffer[i - 2] != '\n')) {
+        (*empty_lines)++;
+      } else if (*empty_lines == 1 && buffer[i + 1] != '\n' && (i - 1 != 0)) {
         putchar(buffer[i]);
+        (*empty_lines)++;
       }
-      (*empty_lines)++;
     } else {
       putchar(buffer[i]);
       *empty_lines = 0;
@@ -76,6 +79,9 @@ void nonprintable(unsigned char current) {
     if (current == 127) {
       putchar('^');
       putchar('?');
+    } else if (current == '\r') {
+      putchar('^');
+      putchar('M');
     } else {
       putchar('^');
       putchar(current + 64);
