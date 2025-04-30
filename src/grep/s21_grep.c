@@ -18,10 +18,10 @@ int main(int argc, char *argv[]) {
                    files_number, flag_option);
       optind++;
     }
-    free(templates);
   } else {
     printf("Invalid input\n");
   }
+  free(templates);
   return 0;
 }
 
